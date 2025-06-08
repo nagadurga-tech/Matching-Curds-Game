@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajax example</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing: border-box;
+        }
+        body{
+            display:flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f8ff;
+            font-family: 'Segoe UI', sans-serif;
+            
+        }
+    
+        .button{
+            padding:10px 20px;
+            width: 160px;
+            margin-top:-20px;
+            border: none;
+            background-color:rgba(109, 147, 235, 0.7);
+            border-radius: 8px;
+            font-size: 18px;
+            color: #fff;
+            cursor:pointer;
+            box-shadow: 0 0 15px rgb(202, 222, 250);
+            transition: 0.3s;
+        }
+        #country{
+            border-radius: 4px;
+            padding:8px;
+            font-size: 16px;
+            border:1px solid #000;
+            margin-top: -10px;
+            width:200px;
+        }
+        .button:hover{
+            background-color:  rgba(81, 141, 247, 0.9);
+        }
+        #country:hover{
+            border: 2px solid  rgba(81, 141, 247, 0.55); 
+            box-shadow: 0 0 10px rgba(81,141,247,0.3)
+        }
+        #data{
+            margin-top:30px;
+            text-align: center;
+        }
+        #data img{
+            width:300px;
+            border-radius: 10px;
+            height: 200px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2); 
+            animation:flag 1s ease-in;
+        }
+        @keyframes flag{
+            from{opacity: 0; transform: scale(0.8);}
+            to{opacity: 1; transform: scale(1);}
+        }
+    </style>
+</head>
+<body>
+    <h2>Enter Country Name</h2><br>
+    <input type="text" id="country" placeholder="e.g.India"/><br>
+    <br>
+    <input type="submit" class="button" id="special" value="Get Flag">
+    <div id="data"></div>
+    <script>
+        let btn= document.getElementById("special")
+        let dataele=document.getElementById("data")
+        let cname=document.getElementById("country")
+
+        btn.addEventListener('click',loadData)
+
+        function loadData(){
+            if(cname.value.trim()){
+                let url=`https://restcountries.com/v3.1/name/${cname.value.trim()}`;
+                let xhr=new XMLHttpRequest()
+
+                xhr.open('GET',url,true)
+                xhr.send()
+                xhr.onload=function(){
+                    if(xhr.status==200){
+                        let result=xhr.responseText
+                        result=JSON.parse(result)
+                        let [country] =result
+                        console.log(country)
+                        dataele.innerHTML=`<h2>Flag of ${country.name.common}</h2>
+                        <img src=${country.flags.png}>`; 
+                    }
+                    else
+                        dataele=innerHTML="<p style='color:red;'>Invalid country name..</p>";
+                }
+                xhr.onprogress=function(){
+                    dataele.innerHTML="<p>Loading...</p>"
+                };
+                xhr.onerror=function(){
+                    dataele.innerHTML="<p style='color:red;'>Failed to Fetch data.</p>";
+                }
+            } else
+                dataele.innerHTML="<p style='color:red'>Please enter a country name.</p>" 
+        }
+    </script>
+</body>
+</html>
